@@ -112,7 +112,23 @@ router.post('/', function (req, res, next) {
 });
 
 function update(req, res, next) {
-    res.send('Alterar/Update produto ' + req.params.id)
+    fs.readFile('./data/produtos.json', "utf8", (err, data) => {
+        const produtos = JSON.parse(data)
+        const id = req.params.id
+
+        const produtoAtualizado = produtos.find((produto) => produto.id === id)
+        if(!produtoAtualizado){
+            res.status(404).send("Produto não encontrado.")
+            return
+        }
+
+        Object.assign(produtoAtualizado, req.body)
+
+        fs.writeFileSync('./data/produtos.json', JSON.stringify(produtos))
+
+        res.send(produtoDeletado)
+
+    })
 }
 router.put('/:id', update);
 router.patch('/:id', update);
@@ -131,5 +147,5 @@ router.delete('/:id', function (req, res, next) {
     // res.send('Remove produto ' + req.params.id)
 });
 
-
+ 
 module.exports = router;
