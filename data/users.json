@@ -3,18 +3,12 @@
       "user": "Neymar Jr",
       "email": "neymar@email.com",
       "password": "bruna123",
-      "endereço": "Alphaville 32",
-      "documento": "223030303",
-      "fotoperfil": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkoZTL44XV43Eu9P_c3IWoFUL_HtOrZh_MnQ&usqp=CAU",
       "id": "1"
     },
     {
       "user": "Tafarel Jr",
       "email": "tafarel@email.com",
       "password": "teste23",
-      "endereço": "Alphaville 38",
-      "documento": "333030303",
-      "fotoperfil": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkoZTL44XV43Eu9P_c3IWoFUL_HtOrZh_MnQ&usqp=CAU",
       "id": "2"
     }
   ]

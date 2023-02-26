@@ -8,7 +8,25 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/:id', function (req, res, next) {
-    res.send("Exibe apenas um users")
+    fs.readFile('./data/users.js', "utf-8", (err, data) =>{
+        const {id} = req.params
+
+        try {
+            const users = JSON.parse(data)
+
+            const usuarioSelecionado = users.find((usuario) => usuario.id === id)
+            if (usuarioSelecionado) {
+                res.send(usuarioSelecionado)
+            } else {
+                res.send("Nenhum usuario encontrado para esse id")
+            }
+        }
+        catch {
+            res.send('Ocorreu um  erro:' + err)
+        }
+
+    })
+    // res.send("Exibe apenas um users")
 });
 
 router.post('/', function(req, res, next) {

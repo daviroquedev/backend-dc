@@ -1,20 +1,19 @@
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
-const { stringify } = require('querystring');
-const { path } = require('../app');
 
 
 //ROTA BUSCANDO TODOS OS PRODUTOS DO ARQUIVO LIDO COM O MODULO FS
 router.get('/', function (req, res, next) {
     fs.readFile('./data/produtos.json', "utf-8", (err, data) => {
-        try{
+        try {
             const produtos = JSON.parse(data)
-            res.send(produtos)    
+            res.send(produtos)
         } catch {
-            res.send('Ocorreu um erro: ' + err)
+            res.status(500)
+            res.send('Ocorreu um erro:')
         }
-       
+
     })
 
 });
@@ -111,25 +110,28 @@ router.post('/', function (req, res, next) {
     })
 });
 
+
+// function para atualizar um produto existente. Pode usar a mesma função tanto para PUT quanto para PATCH, sendo a diferença no corpo da request.
 function update(req, res, next) {
     fs.readFile('./data/produtos.json', "utf8", (err, data) => {
         const produtos = JSON.parse(data)
         const id = req.params.id
 
         const produtoAtualizado = produtos.find((produto) => produto.id === id)
-        if(!produtoAtualizado){
+        if (!produtoAtualizado) {
             res.status(404).send("Produto não encontrado.")
             return
         }
 
+        // atualiza o objeto 'produtoAtualizado' como dados do objeto 'req.body'(request)
         Object.assign(produtoAtualizado, req.body)
 
         fs.writeFileSync('./data/produtos.json', JSON.stringify(produtos))
 
-        res.send(produtoDeletado)
-
+        res.send(produtoAtualizado)
     })
 }
+
 router.put('/:id', update);
 router.patch('/:id', update);
 router.delete('/:id', function (req, res, next) {
@@ -142,9 +144,13 @@ router.delete('/:id', function (req, res, next) {
 
         fs.writeFileSync('./data/produtos.json', JSON.stringify(novosProdutos))
 
-        res.send(produtoDeletado)
+        if (produtoDeletado) {
+            res.send(produtoDeletado)
+        } else {
+            res.status(404).send("Produto não encontrado.")
+        }
+
     })
-    // res.send('Remove produto ' + req.params.id)
 });
 
  
