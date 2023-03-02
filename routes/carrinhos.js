@@ -58,14 +58,58 @@ router.get("/:id/valortotal", (req, res, next) => {
   res.send(`Valor total do carrinho ${carrinhoId}: R$${valorFinal.toFixed(2)}`);
 });
 
-router.get("/:id", function (req, res, next) {
-  res.send("Exibe apenas um carrinho");
+router.get('/:id', function (req, res, next) {
+    res.send("Exibe apenas um carrinho")
 });
 
-router.post("/", function (req, res, next) {
-  res.send("Criar novo carrinho");
-});
-
+router.post('/', function (req, res, next) {
+    // Lê o conteúdo atual do arquivo carrinho.json
+    fs.readFile('./data/carrinho.json', 'utf-8', (err, data) => {
+       if (err) {
+          console.error(err);
+          res.status(500).send('Erro ao ler o arquivo carrinho.json');
+          return;
+       }
+       try {
+          // Converte o conteúdo para um objeto JavaScript
+          const carrinho = JSON.parse(data);
+          // Adiciona o novo item ao array de itens
+          //console.log(carrinho)
+          // Verificar dados
+ 
+          // Verifica se o ID já existe no carrinho
+          const idExistente = carrinho.find((item) => item.id === req.body.id);
+ 
+          if (idExistente) {
+             res.status(400).send('ID já existente no carrinho');
+             return;
+          }
+ 
+          if (!req.body.id) {
+             res.status(400).send('ID não informado');
+             return;
+          }
+ 
+          carrinho.push(req.body);
+          // Converte o objeto JavaScript de volta para JSON
+          const carrinhoJSON = JSON.stringify(carrinho);
+          // Escreve o novo conteúdo no arquivo carrinho.json
+          fs.writeFile('./data/carrinho.json', carrinhoJSON, (err) => {
+             if (err) {
+                console.error(err);
+                res.status(500).send('Erro ao escrever no arquivo carrinho.json');
+                return;
+             }
+             // Retorna o novo item adicionado como resposta
+             res.json(req.body);
+          });
+       } catch (err) {
+          console.error(err);
+          res.status(400).send('JSON inválido');
+       }
+    });
+ });
+ 
 // Rota para editar os itens do carrinho
 router.patch("/:id", function (req, res, next) {
     // Le o arquivo JSON com os carrinhos disponíveis
