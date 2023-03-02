@@ -58,8 +58,29 @@ router.get("/:id/valortotal", (req, res, next) => {
   res.send(`Valor total do carrinho ${carrinhoId}: R$${valorFinal.toFixed(2)}`);
 });
 
+
+//buscar carrinho por id
 router.get('/:id', function (req, res, next) {
-    res.send("Exibe apenas um carrinho")
+  fs.readFile('./data/carrinho.json', "utf-8", (err, data) => {
+    const { id } = req.params
+
+    try {
+        const carrinhos = JSON.parse(data)
+
+        const carrinhoSelecionado = carrinhos.find((carrinho) => carrinho.id === id)
+        if (carrinhoSelecionado) {
+            res.send(carrinhoSelecionado)
+        } else {
+            res.send("Nenhum carrinho encontrado com essa especificação")
+        }
+    }
+    catch {
+        res.send('Ocorreu um erro:' + err)
+    }
+
+
+})
+
 });
 
 router.post('/', function (req, res, next) {
