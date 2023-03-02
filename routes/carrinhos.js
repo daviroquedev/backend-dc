@@ -115,27 +115,39 @@ router.patch("/:id", function (req, res, next) {
     // Le o arquivo JSON com os carrinhos disponíveis
   fs.readFile("./data/carrinho.json", "utf8", (err, data) => {
     const carrinhos = JSON.parse(data);
+    // declara o id enviado pelo patch
     const id = req.params.id;
-
+    // declara o id enviado pelo corpo da requisição 
+    const idReqBody = req.body.id
+    // verifica se o carrinho solicitado existe no JSON
     const carrinhoEditado = carrinhos.find((carrinho) => carrinho.id === id)
-
-    // if (req.body === JSON.parse( )) {
-    //     res.status(304).send("nenhuma mudança foi realizada")
-    //     return
-    // }
-
-    if (!carrinhoEditado) {
-        res.status(404).send("Carrinho não encontrado.")
-        return
+    
+    // verifica se a requisição possui informações o suficiente para serem passadas
+    if (!req.body || Object.keys(req.body).length === 0) {
+      res.status(400).send('Nenhuma mudança foi realizada, pois as informações não são suficientes.');
+      return
     }
 
-
+    // caso a requisição contenha um id, o servidor não autoriza que o mesmo seja usado e avisa ao cliente
+     if (idReqBody) {
+      res.status(401).send("O identificador único não pode ser modificado.")
+      return
+    }
+    
+    // caso o id enviado pelo patch não seja encontrado, o servidor retorna o erro not found
+    if (!carrinhoEditado) {
+      res.status(404).send("Carrinho não encontrado.")
+      return
+    }
+    
+    //copia os valores do objeto de origem (requisição) para o objeto destino (JSON)
     Object.assign(carrinhoEditado, req.body)
-
+    
+    //reescreve os dados modificados no JSON
     fs.writeFileSync('./data/carrinho.json', JSON.stringify(carrinhos))
-
-    res.send("carrinho com o id "+ id + " editado com sucesso! as novas informações são:" + req.body)
-
+    
+    //mensagem mostrando que a requisição foi concluida e mostra o objeto modificado com as informações novas
+    res.send("carrinho com o id "+ id + " editado com sucesso! as novas informações são:" + JSON.stringify(req.body))
   });
 });
 
