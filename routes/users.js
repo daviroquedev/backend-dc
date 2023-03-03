@@ -7,7 +7,7 @@ router.get("/", function (req, res, next) {
 });
 
 router.get('/:id', function (req, res, next) {
-    fs.readFile('./data/users.js', "utf-8", (err, data) =>{
+    fs.readFile('./data/users.json', "utf-8", (err, data) =>{
         const {id} = req.params
 
         try {
@@ -25,9 +25,6 @@ router.get('/:id', function (req, res, next) {
         }
 
     })
-    // res.send("Exibe apenas um users")
-router.get("/:id", function (req, res, next) {
-	res.send("Exibe apenas um users");
 });
 
 router.post("/", function (req, res, next) {
