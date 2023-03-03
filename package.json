@@ -11,5 +11,18 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1"
-  }
+  },
+  "description": "Este é um projeto de backend que utiliza Node.js com o framework Express e segue os princípios da arquitetura de API Restful. O objetivo deste projeto é fornecer uma base sólida de conhecimento para o desenvolvimento de uma API escalável, confiável e de fácil manutenção. Desenvolvido por alunos da Digital College.",
+  "main": "app.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daviroquedev/backend-dc.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daviroquedev/backend-dc/issues"
+  },
+  "homepage": "https://github.com/daviroquedev/backend-dc#readme"
 }
