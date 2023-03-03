@@ -4,18 +4,17 @@ Este é um projeto de backend que utiliza Node.js com o framework Express e segu
 
 ## INTEGRANTES DA EQUIPE
 <ul>
-<li>Davi Roque</li>
-<li>Lucas Monteiro</li>
-<li>Darlan Mendes</li>
-<li>Emerson Souza</li>
-<li>José Antonio</li>
- <li>Antonio Rodrigues</li>
-<li>Matheus Freire</li>
-<li>Ivan Praciano</li>
-<li>Nivea Natalia</li>
-<li>Andre Soares</li>
-<li>Jorge Silva</li>
-
+<li>Davi Roque -  <a href="https://github.com/daviroquedev">GITHUB</a></li>
+<li>Lucas Monteiro -  <a href="https://github.com/LMsousa20">GITHUB</a></li>
+<li>Darlan Mendes -  <a href="https://github.com/DarlanMendes">GITHUB</a></li>
+<li>Emerson Souza -  <a href="https://github.com/SouEmersonSouza">GITHUB</a></li>
+<li>José Antonio -  <a href="https://github.com/JoseAAntonio">GITHUB</a></li>
+ <li>Antonio Rodrigues -  <a href="https://github.com/BigTonny1980">GITHUB</a></li>
+<li>Matheus Freire -  <a href="https://github.com/matheusfmc-digitalcollege">GITHUB</a></li>
+<li>Ivan Praciano -  <a href="https://github.com/404">GITHUB</a></li>
+<li>Nivea Natalia -  <a href="https://github.com/nivea-natalia">GITHUB</a></li>
+<li>Andre Soares -  <a href="https://github.com/andresoaresmota">GITHUB</a></li>
+<li>Jorge Silva -  <a href="https://github.com/jorge-sillva">GITHUB</a></li>
 </ul>
 
 
@@ -51,21 +50,41 @@ Este é um projeto de backend que utiliza Node.js com o framework Express e segu
 
 
   <p>Este projeto possui as seguintes rotas:</p>
-    <ul>
-      <li><code>GET /</code>: Retorna uma mensagem de boas-vindas.</li>
+  <p><code>GET /</code>: Retorna uma mensagem de boas-vindas.</p>
+  
+### ROTAS DE PRODUTOS
+<ul>
       <li><code>GET /produtos </code>: Retorna uma lista de todos os produtos cadastrados.</li>
       <li><code>GET /produtos/:id</code>: Retorna os dados do produto com o ID especificado.</li>
       <li><code>GET /produtos/search?palavra_chave=&info=</code>: Retorna os dados do produto com o filtro especificado.</li>
       <li><code>POST /produtos</code>: Cria um novo produto.</li>
       <li><code>PUT /produtos/:id</code>: Atualiza os dados do produto com o ID especificado.</li>
       <li><code>DELETE /produtos/:id</code>: Exclui o produto com o ID especificado.</li>
-    </ul>
+</ul>
+    
+### ROTAS DE USERS
+<ul>
+      <li><code>GET /users </code>: Retorna uma lista de todos os usuários cadastrados.</li>
+      <li><code>GET /users/:id</code>: Retorna os dados do usuário com o ID especificado.</li>
+      <li><code>POST /users</code>: Cria um novo usuário. </li>
+      <li><code>PUT /users/:id</code>: Atualiza os dados do usuário com o ID especificado.</li>
+      <li><code>DELETE /users/:id</code>: Exclui o usuário com o ID especificado.</li>
+</ul>
+
+### ROTAS DE CARRINHOS
+<ul>
+      <li><code>GET /carrinho </code>: Retorna uma lista de todos os carrinhos cadastrados.</li>
+      <li><code>GET /carrinho/:id</code>: Retorna os dados do carrinho com o ID especificado.</li>
+      <li><code>POST /carrinho</code>: Cria um novo carrinho. </li>
+      <li><code>PUT /carrinho/:id</code>: Atualiza os dados do carrinho com o ID especificado.</li>
+      <li><code>DELETE /carrinho/:id</code>: Exclui o carrinho com o ID especificado.</li>
+</ul>
     
     
-Para testar as rotas do produto Acesse: `http://localhost:3000/produtos/`
+Para testar as rotas do produto Acesse: `http://localhost:3000/`
 
 Para testar a rota que busca os produtos baseado em sua categoria utilizar
-<br/>`http://localhost:3000/produtos/search?palavra_chave=categoria&infto=calçado`
+<br/>`http://localhost:3000/produtos/search?palavra_chave=categoria&info=calçado`
 
 Em primeiro momento criação de uma API que ler o Arquivos em JSON, utilizando o modulo FS.
 Essa API será integrada com o projeto front-end <a href="https://github.com/DarlanMendes/digital-store">Projeto DRIP-STORE</a>. 
