@@ -16,8 +16,25 @@ router.get('/', function (req, res, next) {
     })  
 });
 
-router.get("/:id", function (req, res, next) {
-	res.send("Exibe apenas um users");
+router.get('/:id', function (req, res, next) {
+	fs.readFile('./data/users.json', "utf-8", (err, data) => {
+		const { id } = req.params
+
+		try {
+			const users = JSON.parse(data)
+
+			const usuarioSelecionado = users.find((usuario) => usuario.id === id)
+			if (usuarioSelecionado) {
+				res.send(usuarioSelecionado)
+			} else {
+				res.send("Nenhum usuario encontrado para esse id")
+			}
+		}
+		catch {
+			res.send('Ocorreu um  erro:' + err)
+		}
+
+	})
 });
 
 router.post("/", function (req, res, next) {
@@ -35,7 +52,7 @@ function update(req, res, next) {
 		const id = req.params.id
 
 		const updatedUser = users.find((user) => user.id === id)
-		if(!updatedUser) {
+		if (!updatedUser) {
 			return res.status(404).send('Não foi encontrado o usuário.');
 		}
 
@@ -54,7 +71,7 @@ router.patch("/:id", update)
 router.delete("/:id", function (req, res, next) {
 	fs.readFile("./data/users.json", "utf-8", (err, data) => {
 		if (err) {
-            console.error(err);
+			console.error(err);
 			return res.status(500).send("Erro ao ler arquivo de usuário.");
 		}
 
