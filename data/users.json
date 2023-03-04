@@ -1,15 +1,26 @@
 [
     {
-      "user": "Neymar Jr",
-      "email": "neymar@email.com",
-      "password": "bruna123",
-      "id": "1"
+        "user": "Neymar Jr",
+        "email": "neymar@email.com",
+        "password": "bruna123",
+        "id": "1"
     },
     {
-      "user": "Tafarel Jr",
-      "email": "tafarel@email.com",
-      "password": "teste23",
-      "id": "2"
+        "user": "Tafarel Jr",
+        "email": "tafarel@email.com",
+        "password": "teste23",
+        "id": "2"
+    },
+    {
+        "user": "fallenzao",
+        "email": "fallen@email.com",
+        "password": "bruna123",
+        "id": "3"
+    },
+    {
+        "user": "fallenzao",
+        "email": "falle3nN@email.com",
+        "password": "bruna123",
+        "id": "4"
     }
-  ]
-  
+]
