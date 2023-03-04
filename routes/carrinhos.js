@@ -11,15 +11,13 @@ router.get("/", function (req, res, next) {
 // Rota para calcular o valor total do carrinho
 router.get("/:id/valortotal", (req, res, next) => {
   const carrinhoId = req.params.id; // Pega o ID do carrinho da rota
-  console.log(`id do carrim ` + carrinhoId);
+  console.log(`id do carrinho ` + carrinhoId);
 
   // Lê o arquivo de produtos
   const produtos = JSON.parse(fs.readFileSync("./data/produtos.json", "utf-8"));
 
   // Lê o arquivo de carrinhos
-  const carrinhos = JSON.parse(
-    fs.readFileSync("./data/carrinho.json", "utf-8")
-  );
+  const carrinhos = JSON.parse(fs.readFileSync("./data/carrinho.json", "utf-8"));
   const carrinho = carrinhos.find((c) => c.id === carrinhoId);
 
   if (!carrinho) {
@@ -27,6 +25,7 @@ router.get("/:id/valortotal", (req, res, next) => {
   }
 
   let valorFinal = 0;
+  const produtosNoCarrinho = [];
 
   // Percorre todos os produtos do carrinho
   carrinho.produtos.forEach((produtoNoCarrinho) => {
@@ -48,6 +47,15 @@ router.get("/:id/valortotal", (req, res, next) => {
           `Produto não encontrado para o ID ${produtoNoCarrinho.produto_id}`
         );
     }
+
+    // Adiciona o produto e sua quantidade ao array
+    produtosNoCarrinho.push({
+      id: produto.id,
+      nome: produto.nome,
+      quantidade: produtoNoCarrinho.quantidade,
+      valor: produto.valor,
+      desconto: produto.desconto,
+    });
   });
 
   //const descontoTotal = carrinho.desconto / 100 * valorFinal;
@@ -55,9 +63,19 @@ router.get("/:id/valortotal", (req, res, next) => {
   //console.log("desconto total", descontoTotal)
   totalDesconto = valorFinal * (carrinho.desconto / 100);
   valorFinal -= totalDesconto;
-  res.send(`Valor total do carrinho ${carrinhoId}: R$${valorFinal.toFixed(2)}`);
-});
 
+  // Cria o objeto com os detalhes do carrinho
+  const carrinhoDetalhado = {
+    idCarrinho: carrinho.id,
+    produtosNoCarrinho: produtosNoCarrinho,
+    valorTotal: valorFinal.toFixed(2),
+    descontoUsuarioCarrinho: carrinho.desconto,
+    descontoDinheiroTotal: totalDesconto.toFixed(2),
+  };
+
+  // Envia o objeto como resposta
+  res.send(carrinhoDetalhado);
+});
 
 //buscar carrinho por id
 router.get('/:id', function (req, res, next) {
