@@ -15,6 +15,7 @@ Este é um projeto de backend que utiliza Node.js com o framework Express e segu
 <li>Nivea Natalia -  <a href="https://github.com/nivea-natalia">GITHUB</a></li>
 <li>Andre Soares -  <a href="https://github.com/andresoaresmota">GITHUB</a></li>
 <li>Jorge Silva -  <a href="https://github.com/jorge-sillva">GITHUB</a></li>
+
 </ul>
 
 
@@ -95,6 +96,8 @@ Essa API será integrada com o projeto front-end <a href="https://github.com/Dar
     <ul>
       <li><a href="https://nodejs.org/">Node.js</a>: Plataforma de desenvolvimento JavaScript utilizada para criar aplicações de alta escalabilidade e desempenho.</li>
       <li><a href="https://expressjs.com/">Express</a>: Framework para Node.js que fornece recursos para criação de APIs Restful de forma fácil e rápida.</li>
+       <li><a href="https://expressjs.com/">JWT</a>: JWT é um padrão para autenticação e troca de informações definido pela RFC7519. Nele é possível armazenar de forma segura e compacta objetos JSON. Este token é um código Base64 e pode ser assinado usando um segredo ou par de chaves privadas/públicas.</li>
+      
  </ul>
 
  ## PARA CONTRIBUIR 
