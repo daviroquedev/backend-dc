@@ -4,6 +4,7 @@ var fs = require('fs');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
+const {isAuthenticated} = require('../middleware/isAuthenticated')
 // Seguindo a lógica o usuário deverá criar um perfil com usuário e senha esta que deverá ser criptografada
 
 router.post("/signup", (req,res)=>{
@@ -75,7 +76,7 @@ router.post('/login',(req,res)=>{
                     if(result){
                         //avisar que a senha é valida 200 
                         const token = jwt.sign(
-                            {"user":userToBeVerified.user, "email":userToBeVerified.email},
+                            {user:userToBeVerified[0].user, email:userToBeVerified[0].email},
                             process.env.JWT_SECRET,
                             {expiresIn: '1h'}
                             )
@@ -98,7 +99,41 @@ router.post('/login',(req,res)=>{
     }
 })
 
+//Verificação de token para validar autenticação 
 
+// function verificacaoAuth(req,res,next){
+//     const token = req.headers['x-access-token']
+//     if(!token){
+//         res.status(401)
+//         res.send({auth:false, message:"token não fornecido"})
+//     }
+//     //Tendo um token é extraído o payload para repassar as informacoes 
+//     //usado o método verify para extrair
+//     jwt.verify(token, process.env.JWT_SECRET, (err,decoded)=>{
+//         //Na funçao anonima podemos ter o retorno do token decodificado utilizado o secret ou ocorrer um erro
+//         //Para o erro
+//         if(err){
+//             res.status(500)
+//             res.send({auth:false, message:"Falha na autenticação"})
+//         }
+//         req.user = decoded  // retornando o usuario vindo do token
+//         console.log(decoded)
+//         next()
+//     })
+    
+// }
 
+//teste para o middleware de autenticação 
+router.get("/teste",isAuthenticated,(req,res)=>{
+        //se a minha autenticaçao funcionar a minha rota de teste vai exibir o usuario vindo do token
+        const {user} = req
+        if(user){
+            res.send(user)
+
+        }else{
+            res.status(500)
+            res.send("Ocorreu um erro")
+        }
+})
 
 module.exports = router;
