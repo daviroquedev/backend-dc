@@ -22,7 +22,7 @@ Este é um projeto de backend que utiliza Node.js com o framework Express e segu
 ## FEATURES
 
 <ul>
-<li>Integração com Banco de Dados</li>
+<li>Integração com Banco de Dados MySQL</li>
 <li>Autenticação JWT</li>
 <li>Deploy</li>
 <li>Arquitetura MVC </li>
