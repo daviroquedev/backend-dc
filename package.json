@@ -13,7 +13,9 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.0",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "mysql2": "^3.2.1",
+    "sequelize": "^6.31.0"
   },
   "description": "Este é um projeto de backend que utiliza Node.js com o framework Express e segue os princípios da arquitetura de API Restful. O objetivo deste projeto é fornecer uma base sólida de conhecimento para o desenvolvimento de uma API escalável, confiável e de fácil manutenção. Desenvolvido por alunos da Digital College.",
   "main": "app.js",
