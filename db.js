@@ -40,11 +40,11 @@ async function createModels() {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                length: 10
+                len: 10
             }
         },
     })
-    await Usuario.sync({ force: true });
+    await Usuario.sync();
 
     const Carrinho = sequelize.define('carrinho', {
         desconto: {
@@ -52,7 +52,20 @@ async function createModels() {
         },
     })
     Carrinho.belongsTo(Usuario)
-    await Carrinho.sync({ force: true });
+    Usuario.hasOne(Carrinho)
+    await Carrinho.sync();
+
+    const usuario = await Usuario.create({
+        username: 'username4',
+        email: "alla4@email.com",
+        password: '0123456789',
+    })
+
+    const carrinho = await Carrinho.create({
+        desconto: 10,
+        usuario
+    })
+    console.log(usuario)
 }
 
 createModels()
