@@ -2,8 +2,11 @@ var express = require("express");
 var router = express.Router();
 var fs = require("fs");
 
+const db = require('../db')
 
-router.get('/', function (req, res, next) {
+router.get('/', async function (req, res, next) {
+	const todosUsuarios = await db.Usuario.findAll()
+	console.log('todosUsuarios', todosUsuarios)
 	fs.readFile('./data/users.json', "utf-8", (err, data) => {
 		try {
 			const userSearched = JSON.parse(data)
@@ -61,8 +64,8 @@ router.post('/', (req, res) => {
 			const idExistente = users.find((user) => user.id === req.body.id);
 
 			if (idExistente) {
-			  res.status(400).send('ID já existente na lista de usuários');
-			  return;
+				res.status(400).send('ID já existente na lista de usuários');
+				return;
 			}
 
 			if (!req.body.user || !req.body.email || !req.body.password) {

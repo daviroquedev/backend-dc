@@ -13,16 +13,14 @@ async function auth() {
     }
 }
 
-auth()
-
-
-
-// Modelo: Usuario
-
-async function createModels() {
+let Usuario;
+let Carrinho;
+let Produto;
+let CarrinhoProduto;
+async function createModels(seed) {
     const { DataTypes } = Sequelize
 
-    const Usuario = sequelize.define('usuario', {
+    Usuario = sequelize.define('usuario', {
         username: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -46,26 +44,91 @@ async function createModels() {
     })
     await Usuario.sync();
 
-    const Carrinho = sequelize.define('carrinho', {
+    Carrinho = sequelize.define('carrinho', {
         desconto: {
             type: DataTypes.DECIMAL,
         },
     })
-    Carrinho.belongsTo(Usuario)
-    Usuario.hasOne(Carrinho)
+    Carrinho.belongsTo(Usuario,
+        {
+            onDelete: 'NO ACTION',
+            onUpdate: 'NO ACTION'
+        })
+    Usuario.hasOne(Carrinho,
+        {
+            onDelete: 'NO ACTION',
+            onUpdate: 'NO ACTION'
+        })
     await Carrinho.sync();
 
-    const usuario = await Usuario.create({
-        username: 'username4',
-        email: "alla4@email.com",
-        password: '0123456789',
+    Produto = sequelize.define('produto', {
+        categoria: {
+            type: DataTypes.STRING,
+            allowNull: false, // obrigatorio/required
+        },
+        descricao: {
+            type: DataTypes.STRING,
+            allowNull: false, // obrigatorio/required
+        },
+        valor: {
+            type: DataTypes.DECIMAL,
+            allowNull: false, // obri☻gatorio/required
+        },
+        img: {
+            type: DataTypes.STRING,
+        },
+        desconto: {
+            type: DataTypes.DECIMAL,
+        },
     })
+    await Produto.sync();
 
-    const carrinho = await Carrinho.create({
-        desconto: 10,
-        usuario
-    })
-    console.log(usuario)
+    CarrinhoProduto = sequelize.define('CarrinhoProduto', {
+        quantidade: {
+            type: DataTypes.INTEGER,
+        },
+    });
+    Carrinho.belongsToMany(Produto, {
+        through: CarrinhoProduto,
+        onDelete: 'NO ACTION',
+        onUpdate: 'NO ACTION'
+
+    });
+    Produto.belongsToMany(Carrinho, {
+        through: CarrinhoProduto,
+        onDelete: 'NO ACTION',
+        onUpdate: 'NO ACTION'
+    });
+    await CarrinhoProduto.sync();
+
+    if (seed) {
+        const usuario = await Usuario.create({
+            username: 'username4',
+            email: "alla4@email.com",
+            password: '0123456789',
+        })
+        const carrinho = await Carrinho.create({
+            desconto: 10,
+            usuarioId: usuario.id
+        })
+        const produto = await Produto.create({
+            categoria: "Calçado",
+            descricao: "Ardidas",
+            valor: 20,
+        })
+        await CarrinhoProduto.create({
+            produtoId: produto.id,
+            carrinhoId: carrinho.id,
+            quantidade: 2
+        })
+    }
 }
 
-createModels()
+function main() {
+    auth()
+    // createModels(true) -- Quando quiser adicionar dados inicias do banco
+    createModels()
+    console.log('Usuario', Usuario)
+}
+
+module.exports = { main, usuario: Usuario, Produto, Carrinho, CarrinhoProduto };

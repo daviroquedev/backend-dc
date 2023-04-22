@@ -13,9 +13,7 @@ router.get('/', function (req, res, next) {
             res.status(500)
             res.send('Ocorreu um erro:')
         }
-
     })
-
 });
 //Rota para busca por palavra-chave
 router.get('/search', function (req, res, next) {
