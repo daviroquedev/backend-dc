@@ -78,7 +78,7 @@ async function createModels(seed) {
     })
     await Produto.sync();
 
-    const CarrinhoProduto = sequelize.define('CarrinhoProduto', {
+    const CarrinhoProduto = sequelize.define('carrinhoProduto', {
         quantidade: {
             type: DataTypes.INTEGER,
         },
@@ -131,8 +131,15 @@ async function createModels(seed) {
 
 function main() {
     auth()
-    createModels(true) // Quando quiser adicionar dados inicias do banco
-    // createModels()
+    // createModels(true) // Quando quiser adicionar dados inicias do banco
+    createModels()
 }
 
 module.exports = { main, sequelize };
+
+// 3 Sequelize
+// 3 Integração
+// 3 Deploy (Render)
+// 1 Teste Unitário
+// 1 Extra (Autenticação, Upload Imagem S3, TiraDuvida)
+// 1 Avaliação
