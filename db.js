@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize')
-
 const sequelize = new Sequelize('fs08', 'root', '1234', {
     host: 'localhost', dialect: 'mysql'
 })
@@ -13,14 +12,10 @@ async function auth() {
     }
 }
 
-let Usuario;
-let Carrinho;
-let Produto;
-let CarrinhoProduto;
 async function createModels(seed) {
     const { DataTypes } = Sequelize
 
-    Usuario = sequelize.define('usuario', {
+    const Usuario = sequelize.define('usuario', {
         username: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -44,7 +39,7 @@ async function createModels(seed) {
     })
     await Usuario.sync();
 
-    Carrinho = sequelize.define('carrinho', {
+    const Carrinho = sequelize.define('carrinho', {
         desconto: {
             type: DataTypes.DECIMAL,
         },
@@ -61,7 +56,7 @@ async function createModels(seed) {
         })
     await Carrinho.sync();
 
-    Produto = sequelize.define('produto', {
+    const Produto = sequelize.define('produto', {
         categoria: {
             type: DataTypes.STRING,
             allowNull: false, // obrigatorio/required
@@ -83,7 +78,7 @@ async function createModels(seed) {
     })
     await Produto.sync();
 
-    CarrinhoProduto = sequelize.define('CarrinhoProduto', {
+    const CarrinhoProduto = sequelize.define('CarrinhoProduto', {
         quantidade: {
             type: DataTypes.INTEGER,
         },
@@ -102,6 +97,16 @@ async function createModels(seed) {
     await CarrinhoProduto.sync();
 
     if (seed) {
+        await Usuario.create({
+            username: 'user1',
+            email: "user1@email.com",
+            password: '0123456789',
+        })
+        await Usuario.create({
+            username: 'user2',
+            email: "user2@email.com",
+            password: '0123456789',
+        })
         const usuario = await Usuario.create({
             username: 'username4',
             email: "alla4@email.com",
@@ -126,9 +131,8 @@ async function createModels(seed) {
 
 function main() {
     auth()
-    // createModels(true) -- Quando quiser adicionar dados inicias do banco
-    createModels()
-    console.log('Usuario', Usuario)
+    createModels(true) // Quando quiser adicionar dados inicias do banco
+    // createModels()
 }
 
-module.exports = { main, usuario: Usuario, Produto, Carrinho, CarrinhoProduto };
+module.exports = { main, sequelize };

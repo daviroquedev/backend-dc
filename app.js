@@ -12,6 +12,7 @@ var app = express();
 
 const db = require('./db')
 db.main()
+console.log('app.js', db.usuario)
 
 app.use(logger("dev"));
 app.use(express.json());

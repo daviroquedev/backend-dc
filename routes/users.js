@@ -4,19 +4,16 @@ var fs = require("fs");
 
 const db = require('../db')
 
+
 router.get('/', async function (req, res, next) {
-	const todosUsuarios = await db.Usuario.findAll()
-	console.log('todosUsuarios', todosUsuarios)
-	fs.readFile('./data/users.json', "utf-8", (err, data) => {
-		try {
-			const userSearched = JSON.parse(data)
-			res.status(200).send(userSearched)
-		} catch {
-			res.status(404).send({
-				"erro": "arquivo não encontrado"
-			})
-		}
-	})
+	try {
+		const userSearched = await db.sequelize.models.usuario.findAll()
+		res.status(200).send(userSearched)
+	} catch {
+		res.status(404).send({
+			"erro": "arquivo não encontrado"
+		})
+	}
 });
 
 router.get('/:id', function (req, res, next) {
