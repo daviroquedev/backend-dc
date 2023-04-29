@@ -2,34 +2,67 @@ var express = require("express");
 var router = express.Router();
 var fs = require("fs");
 
+const db = require("../db");
+
 //mostrando todos os carrinhos
-router.get("/", function (req, res, next) {
-  const carrinho = JSON.parse(fs.readFileSync("./data/carrinho.json", "utf-8"));
-  res.json(carrinho);
+router.get("/", async function (req, res, next) {
+  try {
+    const userSearched = await db.sequelize.models.carrinho.findAll();
+    res.status(200).send(userSearched);
+  } catch (err) {
+    console.log(err);
+    res.status(404).send({
+      erro: "arquivo não encontrado",
+    });
+  }
 });
 
 // Rota para calcular o valor total do carrinho
-router.get("/:id/valortotal", (req, res, next) => {
+router.get("/:id/valortotal", async (req, res, next) => {
   const carrinhoId = req.params.id; // Pega o ID do carrinho da rota
   console.log(`id do carrinho ` + carrinhoId);
 
-  // Lê o arquivo de produtos
-  const produtos = JSON.parse(fs.readFileSync("./data/produtos.json", "utf-8"));
-
   // Lê o arquivo de carrinhos
-  const carrinhos = JSON.parse(fs.readFileSync("./data/carrinho.json", "utf-8"));
-  const carrinho = carrinhos.find((c) => c.id === carrinhoId);
+  const carrinho = await db.sequelize.models.carrinho.findOne({
+    where: { id: carrinhoId },
+    raw: true,
+  });
 
   if (!carrinho) {
     return res.status(404).send("Carrinho não encontrado");
   }
 
+  const carrinhoProduto = await db.sequelize.models.carrinhoProduto.findAll({
+    where: {
+      carrinhoId,
+    },
+  });
+  console.log(
+    await db.sequelize.models.carrinhoProduto.findAll({
+      where: {
+        carrinhoId,
+      },
+      raw: true,
+    })
+  );
+
+  const produtosDoCarrinho = await Promise.all(
+    carrinhoProduto.map(async (cp) => {
+      const produto = await db.sequelize.models.produto.findOne({
+        where: { id: cp.produtoId },
+        raw: true,
+      });
+      return { produto, produtoNoCarrinho: cp };
+    })
+  );
+
+  console.log("produtosDoCarrinho", produtosDoCarrinho);
+
   let valorFinal = 0;
   const produtosNoCarrinho = [];
 
   // Percorre todos os produtos do carrinho
-  carrinho.produtos.forEach((produtoNoCarrinho) => {
-    const produto = produtos.find((p) => p.id === produtoNoCarrinho.produto_id);
+  produtosDoCarrinho.forEach(async ({ produto, produtoNoCarrinho }) => {
     console.log("Valor do produto " + produto.valor);
     console.log("Desconto do produto" + produto.desconto);
 
@@ -51,7 +84,7 @@ router.get("/:id/valortotal", (req, res, next) => {
     // Adiciona o produto e sua quantidade ao array
     produtosNoCarrinho.push({
       id: produto.id,
-      nome: produto.nome,
+      descricao: produto.descricao,
       quantidade: produtoNoCarrinho.quantidade,
       valor: produto.valor,
       desconto: produto.desconto,
@@ -78,75 +111,40 @@ router.get("/:id/valortotal", (req, res, next) => {
 });
 
 //buscar carrinho por id
-router.get('/:id', function (req, res, next) {
-  fs.readFile('./data/carrinho.json', "utf-8", (err, data) => {
-    const { id } = req.params
-
-    try {
-      const carrinhos = JSON.parse(data)
-
-      const carrinhoSelecionado = carrinhos.find((carrinho) => carrinho.id === id)
-      if (carrinhoSelecionado) {
-        res.send(carrinhoSelecionado)
-      } else {
-        res.send("Nenhum carrinho encontrado com essa especificação")
-      }
-    }
-    catch {
-      res.send('Ocorreu um erro:' + err)
-    }
-
-
-  })
-
+router.get("/:id", async function (req, res, next) {
+  const { id } = req.params;
+  try {
+    const userSearched = await db.sequelize.models.carrinho.findOne({
+      where: { id },
+    });
+    res.status(200).send(userSearched);
+  } catch (err) {
+    console.log(err);
+    res.status(404).send({
+      erro: "arquivo não encontrado",
+    });
+  }
 });
 
-router.post('/', function (req, res, next) {
-  // Lê o conteúdo atual do arquivo carrinho.json
-  fs.readFile('./data/carrinho.json', 'utf-8', (err, data) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Erro ao ler o arquivo carrinho.json');
-      return;
-    }
-    try {
-      // Converte o conteúdo para um objeto JavaScript
-      const carrinho = JSON.parse(data);
-      // Adiciona o novo item ao array de itens
-      //console.log(carrinho)
-      // Verificar dados
+router.post("/", async function (req, res, next) {
+  const { desconto, produtos } = req.body;
+  try {
+    const carrinhoCriado = await db.sequelize.models.carrinho.create({
+      desconto,
+    });
 
-      // Verifica se o ID já existe no carrinho
-      const idExistente = carrinho.find((item) => item.id === req.body.id);
-
-      if (idExistente) {
-        res.status(400).send('ID já existente no carrinho');
-        return;
-      }
-
-      if (!req.body.id) {
-        res.status(400).send('ID não informado');
-        return;
-      }
-
-      carrinho.push(req.body);
-      // Converte o objeto JavaScript de volta para JSON
-      const carrinhoJSON = JSON.stringify(carrinho);
-      // Escreve o novo conteúdo no arquivo carrinho.json
-      fs.writeFile('./data/carrinho.json', carrinhoJSON, (err) => {
-        if (err) {
-          console.error(err);
-          res.status(500).send('Erro ao escrever no arquivo carrinho.json');
-          return;
-        }
-        // Retorna o novo item adicionado como resposta
-        res.json(req.body);
+    produtos.forEach(async (produto) => {
+      await db.sequelize.models.carrinhoProduto.create({
+        quantidade: produto.quantidade,
+        carrinhoId: carrinhoCriado.id,
+        produtoId: produto.produto_id,
       });
-    } catch (err) {
-      console.error(err);
-      res.status(400).send('JSON inválido');
-    }
-  });
+    });
+    res.send(carrinhoCriado);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send("JSON inválido");
+  }
 });
 
 // Rota para editar os itens do carrinho
@@ -156,57 +154,65 @@ router.patch("/:id", function (req, res, next) {
     const carrinhos = JSON.parse(data);
     // declara o id enviado pelo patch
     const id = req.params.id;
-    // declara o id enviado pelo corpo da requisição 
-    const idReqBody = req.body.id
+    // declara o id enviado pelo corpo da requisição
+    const idReqBody = req.body.id;
     // verifica se o carrinho solicitado existe no JSON
-    const carrinhoEditado = carrinhos.find((carrinho) => carrinho.id === id)
+    const carrinhoEditado = carrinhos.find((carrinho) => carrinho.id === id);
 
     // verifica se a requisição possui informações o suficiente para serem passadas
     if (!req.body || Object.keys(req.body).length === 0) {
-      res.status(400).send('Nenhuma mudança foi realizada, pois as informações não são suficientes.');
-      return
+      res
+        .status(400)
+        .send(
+          "Nenhuma mudança foi realizada, pois as informações não são suficientes."
+        );
+      return;
     }
 
     // caso a requisição contenha um id, o servidor não autoriza que o mesmo seja usado e avisa ao cliente
     if (idReqBody) {
-      res.status(401).send("O identificador único não pode ser modificado.")
-      return
+      res.status(401).send("O identificador único não pode ser modificado.");
+      return;
     }
 
     // caso o id enviado pelo patch não seja encontrado, o servidor retorna o erro not found
     if (!carrinhoEditado) {
-      res.status(404).send("Carrinho não encontrado.")
-      return
+      res.status(404).send("Carrinho não encontrado.");
+      return;
     }
 
     //copia os valores do objeto de origem (requisição) para o objeto destino (JSON)
-    Object.assign(carrinhoEditado, req.body)
+    Object.assign(carrinhoEditado, req.body);
 
     //reescreve os dados modificados no JSON
-    fs.writeFileSync('./data/carrinho.json', JSON.stringify(carrinhos))
+    fs.writeFileSync("./data/carrinho.json", JSON.stringify(carrinhos));
 
     //mensagem mostrando que a requisição foi concluida e mostra o objeto modificado com as informações novas
-    res.send("carrinho com o id " + id + " editado com sucesso! as novas informações são:" + JSON.stringify(req.body))
+    res.send(
+      "carrinho com o id " +
+        id +
+        " editado com sucesso! as novas informações são:" +
+        JSON.stringify(req.body)
+    );
   });
 });
 
-router.delete('/:id', function (req, res, next) {
-  fs.readFile('./data/carrinho.json', "utf8", (err, data) => {
-    const carrinho = JSON.parse(data)
-    const id = req.params.id
-
-    const itemDeletado = carrinho.find((item) => item.id === id)
-    const novoCarrinho = carrinho.filter((item) => item.id !== id)
-
-    fs.writeFileSync('./data/carrinho.json', JSON.stringify(novoCarrinho))
-
-    if (itemDeletado) {
-      res.send(itemDeletado)
-    } else {
-      res.status(404).send("Carrinho não encontrado.")
-    }
-
-  })
+router.delete("/:id", async function (req, res, next) {
+  const { id } = req.params;
+  try {
+    const carrinhoProduto = await db.sequelize.models.carrinhoProduto.destroy({
+      where: { carrinhoId: id },
+    });
+    const carrinho = await db.sequelize.models.carrinho.destroy({
+      where: { id },
+    });
+    res.status(200).send({ carrinhoProduto, carrinho });
+  } catch (err) {
+    console.log(err);
+    res.status(404).send({
+      erro: "arquivo não encontrado",
+    });
+  }
 });
 
 module.exports = router;
