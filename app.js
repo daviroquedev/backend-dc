@@ -1,5 +1,3 @@
-
-
 var createError = require("http-errors"); // lib de tratar errors
 var express = require("express"); // lib do express
 var logger = require("morgan"); // lib lib log (coloca no console o que esta acontecendo no servidor)

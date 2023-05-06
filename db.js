@@ -1,15 +1,27 @@
-const Sequelize = require('sequelize')
-const sequelize = new Sequelize('fs08', 'root', '1234', {
-    host: 'localhost', dialect: 'mysql'
-})
+require("dotenv").config();
+const Sequelize = require("sequelize");
+const { DATABASE, USER, PASSWORD, HOST, DIALECT } = process.env;
+console.log("process.env", { DATABASE, USER, PASSWORD, HOST, DIALECT });
+const sequelize = new Sequelize(
+  DATABASE || "fs08",
+  USER || "root",
+  PASSWORD || "1234",
+  {
+    host: HOST || "localhost",
+    dialect: DIALECT || "mysql",
+    dialectOptions: {
+      ssl: true,
+    },
+  }
+);
 
 async function auth() {
-    try {
-        await sequelize.authenticate()
-        // await sequelize.close()
-    } catch (error) {
-        console.log(error)
-    }
+  try {
+    await sequelize.authenticate();
+    // await sequelize.close()
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function createModels(seed) {
