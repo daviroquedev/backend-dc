@@ -1,7 +1,6 @@
 var createError = require("http-errors"); // lib de tratar errors
 var express = require("express"); // lib do express
 var cors = require('cors')
-app.use(cors())
 
 var logger = require("morgan"); // lib lib log (coloca no console o que esta acontecendo no servidor)
 
@@ -18,6 +17,8 @@ console.log('app.js', db.usuario)
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use(cors())
 
 // Rotas - Modificar para adicionar rotas
 app.use("/", indexRouter);
